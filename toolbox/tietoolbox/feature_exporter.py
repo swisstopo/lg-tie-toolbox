@@ -72,16 +72,32 @@ def AddMsg(msg, severity=0):
 class FeaturesExporter:
     def __init__(self, mxd_path, output_gdb):
         self.mxd_path = mxd_path  # 'CURRNET'
-        self.mxd = get_project(path="CURRENT")
+        self._mxd = None
         self.output_gdb = output_gdb
         self._extent = None
-        self.df = get_dataframes(self.mxd, pattern="*")
+        self._df = None
         self.extent_lyrname = "TieAnalysisExtent"
         self.extent_lyr = None
         self.polygon = None
         self.out_path = None
 
         self._create_workspace()
+
+    @property
+    def mxd(self):
+        if self._mxd is None:
+            try:
+                self._mxd = get_project(path=self.mxd_path)
+            except OSError:
+                pass
+
+        return self._mxd
+
+    @property
+    def df(self):
+        if self._df is None:
+            self._df = get_dataframes(self.mxd, pattern="*")
+        return self._df
 
     def _create_workspace(self):
         out_path = os.path.dirname(self.output_gdb)

@@ -1,4 +1,5 @@
 include README.md
+include CHANGES.txt
 include VERSION
 include tietoolbox/scripts/symbols.tsv
 include LICENSE.txt

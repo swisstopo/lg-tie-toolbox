@@ -18,10 +18,12 @@ build:
 requirements:
   build:
     - python {{ python_requires }}
+    - pip
+    - setuptools
 
   run:
     - python {{ python_requires }}
-    - arcgispro >=3.0
+    - esri::arcgispro >=3.0
     - shapely >=2.0
     - geocube
     - numpy
@@ -39,11 +41,23 @@ requirements:
     - pyyaml
     - pyogrio
     - ipycytoscape
+    - swisstopo::geocover_utils >=0.4.0
+    - swisstopo::untie
 
 
 test:
+  # path is relative to `path` above
+  source_files:
+    - ../tests
+
+  commands:
+      - C:\Python27\ArcGISx6410.8\python.exe $SRC_DIR/../tests/test_TIEtoobox.py
+
   imports:
     - tietoolbox
+    - unittest
+    - geocover_utils
+    - untie
 
 
 about:

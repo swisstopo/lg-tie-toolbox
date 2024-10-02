@@ -55,12 +55,17 @@ from tietoolbox.runner import Runner
 # TODO: disabling
 DEBUG = True
 MAX_LINES = 1000
+DEM_DATASET_NAME = "ch.swisstopo.swissalti3d"
 
 if DEBUG:
     sys.dont_write_bytecode = True
     imp.reload(tie_runner)
 
 # Python2,3
+
+# Global variable to store the config path
+project_config_path = None
+tool_data = dict()
 
 
 class PythonNotFound(Exception):
@@ -69,6 +74,16 @@ class PythonNotFound(Exception):
 
 class GeoprocessingCancelException(Exception):
     pass
+
+
+def is_running_in_arcgis():
+    try:
+        mxd = arcpy.mapping.MapDocument("CURRENT")
+        return True
+    except RuntimeError:
+        print("Not using ArcMap")
+
+    return False
 
 
 class Toolbox(object):
@@ -84,7 +99,7 @@ class Toolbox(object):
 
 class Tool(object):
     def __init__(self):
-        self.config_path = r"H:\config\geocover\geocover.ini"
+        self.config_path = r"H:\config\geocover\geocover.ini"  # Class variable shared by all subclasses
         self.hostname = socket.gethostname()
         self.proxy = False
         self._load_config()
@@ -123,7 +138,7 @@ class Tool(object):
                         self.config.set(section.lower(), key, val)
                     self.config.remove_section(section)
 
-            arcpy.AddMessage(self.config)
+            # arcpy.AddMessage(self.config)
 
         except IOError as e:
             arcpy.AddError("Cannot load config {}: {}".format(self.config_path, e))
@@ -241,9 +256,17 @@ class Exporter(Tool):
             parameterType="Required",
             direction="Input",
         )
+
+        param2 = arcpy.Parameter(
+            displayName="Output",
+            name="out_param",
+            datatype="GPString",
+            parameterType="Derived",
+            direction="Output",
+        )
         param1.value = "Guggisberg"
 
-        params = [param0, param1]
+        params = [param0, param1, param2]
 
         return params
 
@@ -263,6 +286,7 @@ class Exporter(Tool):
         return
 
     def execute(self, parameters, messages):
+        global tool_data
         start = time.time()
 
         # TODO: to be removed once debugged
@@ -280,7 +304,20 @@ class Exporter(Tool):
             os.makedirs(out_directory)
             # TODO: check if GDB alreday exist (update)
 
-        fe = feature_exporter.FeaturesExporter("CURRENT", output_gdb)
+        # TODO
+        if is_running_in_arcgis:
+            project_path = "CURRENT"
+        else:
+            pass
+
+        project_path = os.environ.get("MXD_PROJECT_PATH", "CURRENT")
+
+        # cur_dir = os.path.dirname(os.path.abspath(__file__))
+        # project_path = os.path.join(cur_dir, "test.mxd")
+
+        # raise Exception(project_path)
+
+        fe = feature_exporter.FeaturesExporter(project_path, output_gdb)
 
         fe._get_extent()
 
@@ -292,6 +329,9 @@ class Exporter(Tool):
                     cfg = json.load(f)
             except (IOError, json.JSONDecodeError) as e:
                 arcpy.AddError("Cannot open config file {}: {}".format(config_path, e))
+
+        project_config_path = config_path
+        tool_data["project_config_path"] = config_path
         minx, miny, maxx, maxy = fe.extent
         cfg["gdb"] = output_gdb
         cfg["bbox"] = [ceil(minx), ceil(miny), floor(maxx), floor(maxy)]
@@ -360,12 +400,17 @@ class Exporter(Tool):
                 with open(config_path, "w") as f:
                     f.write(json.dumps(cfg, indent=4))
             arcpy.AddMessage("Config written to: {}".format(config_path))
+            arcpy.SetParameter(2, "Hello")
         except IOError as e:
             arcpy.AddError("Cannot write to {}".format(config_path))
 
         arcpy.AddMessage("Elapsed: {}s".format(time.time() - start))
 
-        return
+        # Cleanup
+        del fe._mxd
+        del fe
+
+        return True
 
 
 class Downloader(Tool):
@@ -377,6 +422,7 @@ class Downloader(Tool):
         super(Downloader, self).__init__(**kwds)
 
     def getParameterInfo(self):
+        global tool_data
         # Define parameter definitions
 
         # First parameter
@@ -387,7 +433,8 @@ class Downloader(Tool):
             parameterType="Required",
             direction="Input",
         )
-        param0.value = r"D:\Projects\Guggisberg\config.json"
+
+        param0.value = tool_data.get("project_config_path")
 
         param1 = arcpy.Parameter(
             displayName="Extent layer",
@@ -409,6 +456,9 @@ class Downloader(Tool):
         """Modify the values and properties of parameters before internal
         validation is performed.  This method is called whenever a parameter
         has been changed."""
+
+        global tool_data
+        parameters[0].value = tool_data.get("project_config_path")
         return
 
     def updateMessages(self, parameters):
@@ -423,8 +473,14 @@ class Downloader(Tool):
             self.python_exe,
             # TODO: absolute path
             os.path.join(
-                self.conda_env_path, "Lib", "site-packages", "geocover", "swissalti.py"
+                self.conda_env_path,
+                "Lib",
+                "site-packages",
+                "geocover_utils",
+                "swissalti.py",
             ),
+            "--dataset",
+            DEM_DATASET_NAME,
             "--yes",
             "--cache-directory",
             self.cache_dir,
@@ -492,6 +548,7 @@ class Analysis(Tool):
 
     def getParameterInfo(self):
         # Define parameter definitions
+        global tool_data
 
         # First parameter
         param0 = arcpy.Parameter(
@@ -501,7 +558,8 @@ class Analysis(Tool):
             parameterType="Required",
             direction="Input",
         )
-        param0.value = r"D:\Projects\Guggisberg\config.json"
+
+        param0.value = tool_data.get("project_config_path")
 
         params = [param0]
 
@@ -515,6 +573,8 @@ class Analysis(Tool):
         """Modify the values and properties of parameters before internal
         validation is performed.  This method is called whenever a parameter
         has been changed."""
+        global tool_data
+        parameters[0].value = tool_data.get("project_config_path")
         return
 
     def updateMessages(self, parameters):
@@ -574,6 +634,7 @@ class Viewer(Tool):
 
     def getParameterInfo(self):
         # Define parameter definitions
+        global tool_data
 
         # First parameter
         param0 = arcpy.Parameter(
@@ -583,7 +644,8 @@ class Viewer(Tool):
             parameterType="Required",
             direction="Input",
         )
-        param0.value = r"D:\Projects\Guggisberg\config.json"
+
+        param0.value = tool_data.get("project_config_path")
 
         param1 = arcpy.Parameter(
             displayName="Plot typ",
@@ -619,6 +681,8 @@ class Viewer(Tool):
         """Modify the values and properties of parameters before internal
         validation is performed.  This method is called whenever a parameter
         has been changed."""
+        global tool_data
+        parameters[0].value = tool_data.get("project_config_path")
         return
 
     def updateMessages(self, parameters):

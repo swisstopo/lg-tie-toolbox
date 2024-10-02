@@ -37,7 +37,7 @@ setup(
         "pyogrio",
         "ipycytoscape",
         "untie>=0.0.8",
-        "geocover_utils>=0.3.0",
+        "geocover_utils>=0.4.0",
     ],
     package_data={
         "tietoolbox": [
