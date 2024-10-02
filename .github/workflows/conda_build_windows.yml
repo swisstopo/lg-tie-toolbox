@@ -1,0 +1,47 @@
+name: conda build windows
+
+# syntax https://help.github.com/en/articles/workflow-syntax-for-github-actions
+on:
+  push:
+    branches: 
+      - '*'
+    tags:
+      - '*'
+    
+jobs:
+  example-2-win:
+    name: Ex2 Windows
+    runs-on: "windows-latest"
+    steps:
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: "latest"
+          activate-environment: foo
+          python-version: 3.7
+          channels: conda-forge,swisstopo
+          allow-softlinks: true
+          channel-priority: flexible
+          show-channel-urls: true
+          use-only-tar-bz2: true
+      - name: Bash
+        shell: bash -el {0}
+        run: |
+          conda info
+          conda list
+      - name: PowerShell
+        shell: powershell
+        run: |
+          conda info
+          conda list
+      - name: PowerShell Core
+        shell: pwsh
+        run: |
+          conda info
+          conda list
+      - name: Cmd.exe
+        shell: cmd /C CALL {0}
+        run: >-
+          conda info && conda list
+      - name: Initialize Conda for Powershell
+        run: conda install --channel conda-forge conda-build anaconda-client conda-verify
+ 
