@@ -47,11 +47,6 @@ requirements:
 
 test:
   # path is relative to `path` above
-  source_files:
-    - ../tests
-
-  commands:
-      - C:\Python27\ArcGISx6410.8\python.exe $SRC_DIR/../tests/test_TIEtoobox.py
 
   imports:
     - tietoolbox
@@ -61,10 +56,10 @@ test:
 
 
 about:
-  home: https://bitbucket.org/procrastinatio/arcmap-tie-toolbox
-  license: BSD-3
+  home: https://github.com/swisstopo/lg-tie-toolbox
+  license: BSD
   summary: {{ summary }}
   description:  {{ summary }}
-  dev_url: https://bitbucket.org/procrastinatio/arcmap-tie-toolbox/src/master/
+  dev_url: https://github.com/swisstopo/lg-tie-toolbox/src/master/
   doc_url: https://anaconda.org/swisstopo/tietoolbox
-  doc_source_url: https://bitbucket.org/procrastinatio/arcmap-tie-toolbox/src/master/toolbox/README.md
+  doc_source_url: https://github.com/swisstopo/lg-tie-toolbox/src/master/toolbox/README.md

@@ -4,30 +4,25 @@ name: conda build windows
 on:
   push:
     branches: 
-      - '*'
+      - 'develop'
     tags:
       - '*'
     
 jobs:
   example-2-win:
-    name: Ex2 Windows
+    name: Windows only
     runs-on: "windows-latest"
     steps:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           miniconda-version: "latest"
-          activate-environment: foo
-          python-version: 3.7
-          channels: conda-forge,swisstopo
+          activate-environment: TIE
+          python-version: 3.9
+          channels: swisstopo,conda-forge
           allow-softlinks: true
           channel-priority: flexible
           show-channel-urls: true
           use-only-tar-bz2: true
-      - name: Bash
-        shell: bash -el {0}
-        run: |
-          conda info
-          conda list
       - name: PowerShell
         shell: powershell
         run: |
@@ -41,7 +36,14 @@ jobs:
       - name: Cmd.exe
         shell: cmd /C CALL {0}
         run: >-
-          conda info && conda list
+          conda info && conda list &&
+          conda install --channel conda-forge conda-build anaconda-client conda-verify  &&
+          conda build --help
+          python -c "import os; print(os.listdir())"
       - name: Initialize Conda for Powershell
-        run: conda install --channel conda-forge conda-build anaconda-client conda-verify
+        shell: pwsh
+        run: |
+           conda install --channel conda-forge conda-build anaconda-client conda-verify
+           conda build --help
+           conda-build --debug -c swisstopo  -c esri -c conda-forge  ..\recipe\meta.yaml
  
