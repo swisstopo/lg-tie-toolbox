@@ -4,9 +4,9 @@ TIE Analysis
 Basic ESRI ArcMap's Toolbox to perform Trace Information Extraction (TIE) Analysis.
 
 
-![TIE flow](flow.png)
+![TIE flow](images/flow.png)
 
-![TIE analysis](trace_analysis.png)
+![TIE analysis](images/trace_analysis.png)
 
 
 Installation
