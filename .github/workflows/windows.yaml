@@ -24,7 +24,7 @@ jobs:
           python-version: 3.9.18 # Set the specific Python version
           auto-update-conda: true
           activate-environment: TIE
-          channels: swisstopo,conda-forge,esri  # default is included
+          channels: swisstopo,conda-forge  # default is included
           channel-priority: flexible
           
       - name: Install 7-Zip
@@ -53,7 +53,7 @@ jobs:
       - name: Set Package Version
         shell: pwsh
         run: |
-          $version = Get-Content toolbox/VERSION
+          $version = Get-Content src/backend/VERSION
           echo "version=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "=== PKG_VERSION=$version ==="
           
@@ -73,7 +73,7 @@ jobs:
       - name: Build Conda Package
         shell: pwsh
         run: |
-          conda build -c swisstopo -c conda-forge -c esri recipe
+          conda build -c swisstopo -c conda-forge  src/backend/recipe
           $PACKAGE_PATH = conda build  --output recipe
           echo "PACKAGE_PATH=$PACKAGE_PATH" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "=== PACKAGE_PATH=$PACKAGE_PATH ==="

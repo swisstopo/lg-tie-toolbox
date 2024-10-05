@@ -1,4 +1,4 @@
-{% set data = load_setup_py_data(setup_file='../toolbox/setup.py', from_recipe_dir=True) %}
+{% set data = load_setup_py_data(setup_file='../setup.py', from_recipe_dir=True) %}
 {% set name = data.get('name') %}
 {% set version = data.get('version') %}
 {% set summary = data.get('description') %}
@@ -10,7 +10,7 @@ package:
   version: {{ version }}
 
 source:
-  path: ../toolbox
+  path: ../tietools
 
 build:
   script: python setup.py install --single-version-externally-managed --record=record.txt
@@ -23,7 +23,6 @@ requirements:
 
   run:
     - python {{ python_requires }}
-    - esri::arcgispro >=3.0
     - shapely >=2.0
     - geocube
     - numpy

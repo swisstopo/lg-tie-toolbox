@@ -40,13 +40,7 @@ setup(
         "geocover_utils>=0.4.0",
     ],
     package_data={
-        "tietools": [
-            "esri/toolboxes/*",
-            "esri/arcpy/*",
-            "esri/help/gp/*",
-            "esri/help/gp/toolboxes/*",
-            "esri/help/gp/messages/*",
-        ],
+
         "tietools.scripts": [
             "scripts/symbols.tsv",
             "scripts/*",
@@ -72,7 +66,7 @@ setup(
     entry_points={
         "console_scripts": [
             "tie_analysis = tietools.scripts.tie_analysis_dask:main",
-            "tie_viewver = tietools.scripts.tie_viewer:main",
+            "tie_viewer = tietools.scripts.tie_viewer:main",
         ],
     },
 )

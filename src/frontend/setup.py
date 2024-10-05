@@ -7,45 +7,22 @@ def read(fname):
 
 
 setup(
-    name="tietools",
+    name="tietools.esri",
     version=read("VERSION").strip(),
     author="swisstopo",
     description=(
-        "Basic ESRI ArcMap/ArcGis Pro TIE Toolbox to perform Trace Information Extraction (TIE) Analysis."
+        "Basic ESRI ArcMap/ArcGis Pro TIE Toolbox (UI)"
     ),
     long_description=read("README.md"),
     long_description_content_type='text/markdown',
-    python_requires="~=3.9.18",
-    packages=["tietools", "tietools.scripts",],
+    python_requires=">=2.7",
+    packages=[ "tietools.esri",],
     license_files = ('LICENSE.txt',),
     install_requires=[
-        "shapely",
-        "geocube",
-        "numpy",
-        "geopandas",
-        "mayavi",
-        "matplotlib",
-        "rasterio",
-        "scipy",
-        "scikit-image",
-        "dask",
-        "tqdm",
-        "gdal",
-        "pyproj",
-        "geojson",
-        "pyyaml",
-        "pyogrio",
-        "ipycytoscape",
-        "untie>=0.0.8",
-        "geocover_utils>=0.4.0",
+        "arcpy",
+        "tietools>=0.5.0",
     ],
-    package_data={
 
-        "tietools.scripts": [
-            "scripts/symbols.tsv",
-            "scripts/*",
-        ],
-    },
     include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -55,6 +32,7 @@ setup(
         "Topic :: Scientific/Engineering :: Image Processing",
         "Topic :: Scientific/Engineering :: GIS",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -63,10 +41,5 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
     ],
-    entry_points={
-        "console_scripts": [
-            "tie_analysis = tietools.scripts.tie_analysis_dask:main",
-            "tie_viewver = tietools.scripts.tie_viewer:main",
-        ],
-    },
+
 )
