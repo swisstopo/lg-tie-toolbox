@@ -1,0 +1,41 @@
+name: conda build windows
+
+# syntax https://help.github.com/en/articles/workflow-syntax-for-github-actions
+on:
+  push:
+    branches: 
+      - 'develop'
+    tags:
+      - '*'
+    
+jobs:
+  example-2-win:
+    name: Windows only
+    runs-on: "windows-latest"
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: "latest"
+          activate-environment: TIE
+          python-version: 3.9.18
+          channels: swisstopo,conda-forge
+          allow-softlinks: true
+          channel-priority: flexible
+          show-channel-urls: true
+          use-only-tar-bz2: true
+      - name: Default shell
+        run: |
+          conda info
+          conda list
+      - name: Cmd.exe
+        run: |
+          conda info && conda list &&
+          conda install --channel conda-forge conda-build anaconda-client conda-verify  &&
+          conda build --help
+          python -c "import os; print(os.listdir())"
+          conda env export 
+
+ 
