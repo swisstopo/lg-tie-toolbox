@@ -33,7 +33,8 @@ jobs:
       - name: Cmd.exe
         run: |
           conda info && conda list &&
-          conda install --channel conda-forge conda-build anaconda-client conda-verify  &&
+          conda install --channel conda-forge conda-build anaconda-client conda-verify
+          conda install -c swisstopo -c conda-forge -c esri geocube geopandas matplotlib mayavi numpy rasterio scipy "shapely>=2.0.0"  scikit-image dask
           conda build --help
           python -c "import os; print(os.listdir())"
           conda env export 
