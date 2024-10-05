@@ -1,0 +1,6 @@
+include README.md
+include CHANGES.txt
+include VERSION
+include scripts/symbols.tsv
+include LICENSE.txt
+include images/*.png
