@@ -17,6 +17,8 @@ venv3
 *.pkl
 *.npy
 
+*.egg-info
+
 # Log files
 *.log
 
