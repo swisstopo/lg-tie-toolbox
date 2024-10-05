@@ -1,4 +1,4 @@
-name: conda build windows
+name: Build Windows Conda env
 
 # syntax https://help.github.com/en/articles/workflow-syntax-for-github-actions
 on:
@@ -9,8 +9,8 @@ on:
       - '*'
     
 jobs:
-  example-2-win:
-    name: Windows only
+  conda-env:
+    name: Windows Conda env for TIE
     runs-on: "windows-latest"
     defaults:
       run:
