@@ -50,6 +50,13 @@ jobs:
           conda list
           echo $env:CONDA_PREFIX
           
+      - name: Set Package Version
+        shell: pwsh
+        run: |
+          $version = Get-Content toolbox/VERSION
+          echo "version=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "=== PKG_VERSION=$version ==="
+          
       - name: Compress package with 7z
         shell: pwsh
         run: |
@@ -69,8 +76,7 @@ jobs:
           conda build -c swisstopo -c conda-forge -c esri recipe
           $PACKAGE_PATH = conda build  --output recipe
           echo "PACKAGE_PATH=$PACKAGE_PATH" | Out-File -FilePath $env:GITHUB_ENV -Append
-          $version = Get-Content toolbox/VERSION
-          echo "version=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "=== PACKAGE_PATH=$PACKAGE_PATH ==="
           
       - name: Toying with Bash
         shell: bash
