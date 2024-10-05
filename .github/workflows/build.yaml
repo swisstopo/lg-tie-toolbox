@@ -26,17 +26,23 @@ jobs:
           channel-priority: flexible
           show-channel-urls: true
           use-only-tar-bz2: true
-      - name: Default shell
+      - shell: bash -el {0}
+        name: Bash
         run: |
           conda info
           conda list
-      - name: Cmd.exe
+          conda config --show-sources
+          conda config --show
+          printenv | sort
+      - name: Build install
+        shell: bash -el {0}
         run: |
-          conda info && conda list &&
           conda install --channel conda-forge conda-build anaconda-client conda-verify
           conda install -c swisstopo -c conda-forge -c esri geocube geopandas matplotlib mayavi numpy rasterio scipy "shapely>=2.0.0"  scikit-image dask
           conda build --help
           python -c "import os; print(os.listdir())"
+          conda info
+          conda list
           conda env export 
 
  
