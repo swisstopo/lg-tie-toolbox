@@ -47,8 +47,8 @@ jobs:
       - name: Upload Compressed conda env
         uses: actions/upload-artifact@v4
         with:
-          name: conda-envs-${{CONDA_DEFAULT_ENV}}.zip
-          path: ${{ CONDA_PREFIX }} 
+          name: conda-envs-${{env.CONDA_DEFAULT_ENV}}.zip
+          path: ${{ env.CONDA_PREFIX }} 
           compression-level: 5
           
           
