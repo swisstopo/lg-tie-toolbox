@@ -7,7 +7,7 @@ def read(fname):
 
 
 setup(
-    name="tietoolbox",
+    name="tietools",
     version=read("VERSION").strip(),
     author="swisstopo",
     description=(
@@ -16,7 +16,7 @@ setup(
     long_description=read("README.md"),
     long_description_content_type='text/markdown',
     python_requires="~=3.9.18",
-    packages=["tietoolbox", "tietoolbox.scripts", "tietoolbox.esri.toolboxes",],
+    packages=["tietools", "tietools.scripts",],
     license_files = ('LICENSE.txt',),
     install_requires=[
         "shapely",
@@ -40,14 +40,14 @@ setup(
         "geocover_utils>=0.4.0",
     ],
     package_data={
-        "tietoolbox": [
+        "tietools": [
             "esri/toolboxes/*",
             "esri/arcpy/*",
             "esri/help/gp/*",
             "esri/help/gp/toolboxes/*",
             "esri/help/gp/messages/*",
         ],
-        "tietoolbox.scripts": [
+        "tietools.scripts": [
             "scripts/symbols.tsv",
             "scripts/*",
         ],
@@ -71,8 +71,8 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "tie_analysis = tietoolbox.scripts.tie_analysis_dask:main",
-            "tie_viewver = tietoolbox.scripts.tie_viewer:main",
+            "tie_analysis = tietools.scripts.tie_analysis_dask:main",
+            "tie_viewver = tietools.scripts.tie_viewer:main",
         ],
     },
 )
