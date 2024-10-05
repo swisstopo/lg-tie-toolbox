@@ -19,7 +19,7 @@ setup(
         "tietoolbox.esri",
     ],
     license_files=("LICENSE.txt",),
-     extras_require={
+    extras_require={
         "ESRI": ["arcpy", "arcgis"],
         "swisstopo": ["tietoolbox"],
     },

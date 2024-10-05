@@ -7,7 +7,7 @@ def read(fname):
 
 
 setup(
-    name="tietools",
+    name="tietoolbox",
     version=read("VERSION").strip(),
     author="swisstopo",
     description=(
@@ -15,8 +15,8 @@ setup(
     ),
     long_description=read("README.md"),
     long_description_content_type='text/markdown',
-    python_requires="~=3.9.18",
-    packages=["tietools", "tietools.scripts",],
+    python_requires=">=3.9.0",
+    packages=["tietoolbox", "tietoolbox.scripts",],
     license_files = ('LICENSE.txt',),
     install_requires=[
         "shapely",
@@ -41,7 +41,7 @@ setup(
     ],
     package_data={
 
-        "tietools.scripts": [
+        "tietoolbox.scripts": [
             "scripts/symbols.tsv",
             "scripts/*",
         ],
@@ -65,8 +65,8 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "tie_analysis = tietools.scripts.tie_analysis_dask:main",
-            "tie_viewer = tietools.scripts.tie_viewer:main",
+            "tie_analysis = tietoolbox.scripts.tie_analysis_dask:main",
+            "tie_viewer = tietoolbox.scripts.tie_viewer:main",
         ],
     },
 )
