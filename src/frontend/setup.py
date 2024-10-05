@@ -7,22 +7,22 @@ def read(fname):
 
 
 setup(
-    name="tietools.esri",
+    name="tietoolbox.esri",
     version=read("VERSION").strip(),
     author="swisstopo",
-    description=(
-        "Basic ESRI ArcMap/ArcGis Pro TIE Toolbox (UI)"
-    ),
+    description=("Basic ESRI ArcMap/ArcGis Pro TIE Toolbox (UI)"),
     long_description=read("README.md"),
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     python_requires=">=2.7",
-    packages=[ "tietools.esri",],
-    license_files = ('LICENSE.txt',),
-    install_requires=[
-        "arcpy",
-        "tietools>=0.5.0",
+    package_dir={"": "."},
+    packages=[
+        "tietoolbox.esri",
     ],
-
+    license_files=("LICENSE.txt",),
+     extras_require={
+        "ESRI": ["arcpy", "arcgis"],
+        "swisstopo": ["tietoolbox"],
+    },
     include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -41,5 +41,4 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
     ],
-
 )
