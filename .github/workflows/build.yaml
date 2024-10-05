@@ -43,6 +43,15 @@ jobs:
           python -c "import os; print(os.listdir())"
           conda info
           conda list
-          conda env export 
+          conda env export
+      - name: Upload Compressed conda env
+        uses: actions/upload-artifact@v4
+        with:
+          name: conda-envs-${{CONDA_DEFAULT_ENV}}.zip
+          path: ${{ CONDA_PREFIX }} 
+          compression-level: 5
+          
+          
+          CONDA_PREFIX
 
  
