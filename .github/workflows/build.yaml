@@ -52,6 +52,5 @@ jobs:
           compression-level: 5
           
           
-          CONDA_PREFIX
-
+      
  
