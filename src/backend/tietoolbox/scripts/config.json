@@ -1,0 +1,34 @@
+{
+  "name": "Widdergalm",
+  "project_dir": "./cache",
+  "geodata_dir": "/home/marco/GEODATA",
+  "underground": true,
+  "bar_direction": "underground",
+  "rasterize_method": "rasterizeSHP",
+  "log_level": "INFO",
+  "bbox": [
+    2592150,
+    1165850,
+    2593850,
+    1167500
+  ],
+  "settings": {
+    "proxy": "",
+    "cache_directory": "/home/marco/tmp",
+    "num_processes": 2
+  },
+  "DEM": {
+    "source": "./data/Widdergalm/swissalti3d-2.0-mosaic.tif",
+    "resolution": "2.0"
+  },
+  "Bedrock": {
+    "source": "/home/marco/GEODATA/TIE/geocover/boltingen.gdb",
+    "layer": "Bedrock_HARMOS_lt40000_Extract",
+    "attribute": "TOPGIS_GC_GC_BED_FORM_ATT_FMAT_LITSTRAT"
+  },
+  "Lines": {
+    "source": "/home/marco/GEODATA/TIE/geocover/boltingen.gdb",
+    "layer": "Linear_Objects",
+    "attribute": "KIND"
+  }
+}
