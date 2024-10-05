@@ -10,7 +10,8 @@ package:
   version: {{ version }}
 
 source:
-  path: ../tietools
+  # to setup.py
+  path: ..
 
 build:
   script: python setup.py install --single-version-externally-managed --record=record.txt
