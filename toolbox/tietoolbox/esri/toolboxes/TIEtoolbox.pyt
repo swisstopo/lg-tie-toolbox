@@ -407,8 +407,11 @@ class Exporter(Tool):
         arcpy.AddMessage("Elapsed: {}s".format(time.time() - start))
 
         # Cleanup
-        del fe._mxd
-        del fe
+        try:
+            del fe
+        except Exception as e:
+            arcpy.AddError("Error while cleaning up: {}".format(e))
+
 
         return True
 
@@ -457,8 +460,9 @@ class Downloader(Tool):
         validation is performed.  This method is called whenever a parameter
         has been changed."""
 
-        global tool_data
-        parameters[0].value = tool_data.get("project_config_path")
+        project_cfg_path = tool_data.get("project_config_path")
+        if project_cfg_path and os.path.isfile(project_cfg_path):
+            parameters[0].value = project_cfg_path
         return
 
     def updateMessages(self, parameters):
@@ -559,7 +563,9 @@ class Analysis(Tool):
             direction="Input",
         )
 
-        param0.value = tool_data.get("project_config_path")
+        project_cfg_path = tool_data.get("project_config_path")
+        if project_cfg_path and os.path.isfile(project_cfg_path):
+            param0.value = project_cfg_path
 
         params = [param0]
 
@@ -574,7 +580,9 @@ class Analysis(Tool):
         validation is performed.  This method is called whenever a parameter
         has been changed."""
         global tool_data
-        parameters[0].value = tool_data.get("project_config_path")
+        project_cfg_path = tool_data.get("project_config_path")
+        if project_cfg_path and os.path.isfile(project_cfg_path):
+            parameters[0].value = project_cfg_path
         return
 
     def updateMessages(self, parameters):
@@ -682,7 +690,9 @@ class Viewer(Tool):
         validation is performed.  This method is called whenever a parameter
         has been changed."""
         global tool_data
-        parameters[0].value = tool_data.get("project_config_path")
+        project_cfg_path = tool_data.get("project_config_path")
+        if project_cfg_path and os.path.isfile(project_cfg_path):
+            parameters[0].value = project_cfg_path
         return
 
     def updateMessages(self, parameters):
