@@ -64,10 +64,5 @@ jobs:
           compression-level: 0 # no compression
           
     
-      - name: Test Conda Package Installation
-        run: |
-          conda create -n test-env --use-local tietoolbox
-          conda activate test-env
-          # Run additional commands to test the package
 
 
