@@ -20,3 +20,10 @@ Version 0.4.5
 2024-10-02
 - Pinned numpy version
 - Moved from bitbucket to github
+
+Version 0.4.6
+2024-10-06
+- Doc cleanup
+- Instal script (.bat and .ps1)
+- Create conda env from scratch anywhere (D:\conda\envs, \\server\conda\envs)
+
