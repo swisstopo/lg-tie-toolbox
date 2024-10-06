@@ -1,0 +1,65 @@
+{% set data = load_setup_py_data(setup_file='../toolbox/setup.py', from_recipe_dir=True) %}
+{% set name = data.get('name') %}
+{% set version = data.get('version') %}
+{% set summary = data.get('description') %}
+{% set description = data.get('long_description') %}
+{% set python_requires = data.get('python_requires') %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  path: ../toolbox
+
+build:
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python {{ python_requires }}
+    - pip
+    - setuptools
+
+  run:
+    - python {{ python_requires }}
+    - esri::arcgispro >=3.0
+    - shapely >=2.0
+    - geocube
+    - numpy
+    - geopandas
+    - mayavi >=4.8.1
+    - matplotlib
+    - rasterio
+    - scipy
+    - scikit-image
+    - dask
+    - tqdm
+    - gdal
+    - pyproj
+    - geojson
+    - pyyaml
+    - pyogrio
+    - ipycytoscape
+    - swisstopo::geocover_utils >=0.4.0
+    - swisstopo::untie
+
+
+test:
+  # path is relative to `path` above
+
+  imports:
+    - tietoolbox
+    - unittest
+    - geocover_utils
+    - untie
+
+
+about:
+  home: https://github.com/swisstopo/lg-tie-toolbox
+  license: BSD
+  summary: {{ summary }}
+  description:  {{ summary }}
+  dev_url: https://github.com/swisstopo/lg-tie-toolbox/src/master/
+  doc_url: https://anaconda.org/swisstopo/tietoolbox
+  doc_source_url: https://github.com/swisstopo/lg-tie-toolbox/src/master/toolbox/README.md
