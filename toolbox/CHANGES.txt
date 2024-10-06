@@ -27,3 +27,9 @@ Version 0.4.6
 - Instal script (.bat and .ps1)
 - Create conda env from scratch anywhere (D:\conda\envs, \\server\conda\envs)
 
+Version 0.4.7
+2024-10-06
+- missing geocover_utils dependency
+- using scripts created by `entry_points (in `<conda env>\Scripts`)
+- fix small cleanup error
+

@@ -105,7 +105,7 @@ class TIEDataProcessor:
                 layer=tec_name,
             )
         except (pyogrio.errors.DataSourceError, pyogrio.errors.DataLayerError) as py_e:
-            logging.error(f"Error while loading '{tec_name}': {py_e}")
+            logging.error(f"Error while loading '{tec_name}' at '{self.tec_path}': {py_e}")
         except Exception as e:
             logging.error(f"Unknown error while loading {tec_name}: {e}")
 

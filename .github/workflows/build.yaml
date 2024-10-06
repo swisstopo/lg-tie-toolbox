@@ -1,0 +1,73 @@
+name: Build Conda Package for many OS
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+
+jobs:
+  miniconda:
+    name: Miniconda ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: ["ubuntu-latest", "windows-latest"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.9.18 # Set the specific Python version
+          auto-update-conda: true
+          activate-environment: TIE
+          channels: swisstopo,conda-forge  # default is included
+          channel-priority: flexible
+      - shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+
+      - name: Install packages in PowerShell Core
+        shell: bash -l {0}
+        run: |
+          conda install --channel conda-forge conda-build anaconda-client conda-verify 
+          conda install --channel conda-forge  geocube geopandas matplotlib mayavi numpy rasterio scipy "shapely>=2.0.0"  scikit-image dask
+          conda build --help
+          conda info
+          conda list
+          echo $env:CONDA_PREFIX
+          
+      - name: Set Package Version
+        shell: bash -l {0}
+        run: |
+          echo "version=$(<toolbox/VERSION)" >> $GITHUB_ENV
+          echo "=== PKG_VERSION=$version ==="
+          
+      
+         
+      - name: Build Conda Package
+        shell: bash -l {0}
+        run: |
+          conda build -c swisstopo -c conda-forge  recipe
+          echo "PACKAGE_PATH=$(conda build  --output recipe)" >> $GITHUB_ENV
+          echo "=== PACKAGE_PATH=$PACKAGE_PATH ==="
+          
+  
+
+      - name: Upload Conda Package to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name:  tietoolbox-${{ env.version }}-py39_0.tar.bz2
+          path:   ${{ env.PACKAGE_PATH }} 
+          compression-level: 0 # no compression
+          
+    
+      - name: Test Conda Package Installation
+        run: |
+          conda create -n test-env --use-local tietoolbox
+          conda activate test-env
+          # Run additional commands to test the package
+
+

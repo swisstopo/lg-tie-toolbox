@@ -100,14 +100,15 @@ class Toolbox(object):
 class Tool(object):
     def __init__(self):
         self.config_path = r"H:\config\geocover\geocover.ini"  # Class variable shared by all subclasses
+        self._config = None
         self.hostname = socket.gethostname()
         self.proxy = False
-        self._load_config()
+
         self._get_proxy()
         self.cancel_op = False
         self._cache_dir = None
         self._python_exe = None
-        self.conda_env_path = None
+        self._conda_env_path = None
         self.conda_env_name = None
         self.output = Queue()
         self.current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -125,20 +126,35 @@ class Tool(object):
             self._cache_dir = os.path.expandvars("%TEMP%")
         return self._cache_dir
 
+    @property
+    def config(self):
+        if self._config:
+            return self._config
+        return self._load_config()
+
+    @property
+    def conda_env_path(self):
+        if self._conda_env_path is None:
+            self._conda_env_path = self.config.get(
+                self.hostname, "tie_conda_env"
+            ).strip()
+        return self._conda_env_path
+
     def _load_config(self):
         # geocover.ini
-        self.config = configparser.ConfigParser()
+        self._config = configparser.ConfigParser()
         try:
-            self.config.read(self.config_path)
-            sections = self.config.sections()
+            self._config.read(self.config_path)
+            sections = self._config.sections()
             for section in sections:
                 if not section == section.lower():
-                    self.config.add_section(section.lower())
-                    for key, val in self.config.items(section):
-                        self.config.set(section.lower(), key, val)
-                    self.config.remove_section(section)
+                    self._config.add_section(section.lower())
+                    for key, val in self._config.items(section):
+                        self._config.set(section.lower(), key, val)
+                    self._config.remove_section(section)
 
-            # arcpy.AddMessage(self.config)
+            # arcpy.AddMessage(self._config)
+            return self._config
 
         except IOError as e:
             arcpy.AddError("Cannot load config {}: {}".format(self.config_path, e))
@@ -170,12 +186,10 @@ class Tool(object):
 
         else:
             try:
-                conda_env_path = self.config.get(self.hostname, "tie_conda_env").strip()
-
-                python_exe = os.path.join(conda_env_path, exe_name)
+                python_exe = os.path.join(self.conda_env_path, exe_name)
                 arcpy.AddMessage("Python exe: {}".format(python_exe))
-                self.conda_env_path = conda_env_path
-                self.conda_env_name = os.path.basename(conda_env_path)
+
+                self.conda_env_name = os.path.basename(self.conda_env_path)
 
                 # TODO: absolute path
                 """os.environ["GDAL_DATA"] = os.path.join(
@@ -407,8 +421,10 @@ class Exporter(Tool):
         arcpy.AddMessage("Elapsed: {}s".format(time.time() - start))
 
         # Cleanup
-        del fe._mxd
-        del fe
+        try:
+            del fe
+        except Exception as e:
+            arcpy.AddError("Error while cleaning up: {}".format(e))
 
         return True
 
@@ -457,8 +473,9 @@ class Downloader(Tool):
         validation is performed.  This method is called whenever a parameter
         has been changed."""
 
-        global tool_data
-        parameters[0].value = tool_data.get("project_config_path")
+        project_cfg_path = tool_data.get("project_config_path")
+        if project_cfg_path and os.path.isfile(project_cfg_path):
+            parameters[0].value = project_cfg_path
         return
 
     def updateMessages(self, parameters):
@@ -469,9 +486,8 @@ class Downloader(Tool):
     def execute(self, parameters, messages):
         config_file = parameters[0].valueAsText
         # TODO DEM source (mosaic_path)
-        cmd_args = [
-            self.python_exe,
-            # TODO: absolute path
+
+        (
             os.path.join(
                 self.conda_env_path,
                 "Lib",
@@ -479,6 +495,17 @@ class Downloader(Tool):
                 "geocover_utils",
                 "swissalti.py",
             ),
+        )
+
+        script_path = os.path.join(self.conda_env_path, "Scripts", "swissalti")
+        if script_path is None:
+            arcpy.AddError("Cannot find script path: 'swissalti'")
+            raise arcpy.ExecuteError
+
+        cmd_args = [
+            self.python_exe,
+            # TODO: absolute path
+            script_path,
             "--dataset",
             DEM_DATASET_NAME,
             "--yes",
@@ -559,7 +586,9 @@ class Analysis(Tool):
             direction="Input",
         )
 
-        param0.value = tool_data.get("project_config_path")
+        project_cfg_path = tool_data.get("project_config_path")
+        if project_cfg_path and os.path.isfile(project_cfg_path):
+            param0.value = project_cfg_path
 
         params = [param0]
 
@@ -574,7 +603,10 @@ class Analysis(Tool):
         validation is performed.  This method is called whenever a parameter
         has been changed."""
         global tool_data
-        parameters[0].value = tool_data.get("project_config_path")
+        project_cfg_path = tool_data.get("project_config_path")
+        if project_cfg_path and os.path.isfile(project_cfg_path):
+            parameters[0].value = project_cfg_path
+            tool_data["project_config_path"] = project_cfg_path
         return
 
     def updateMessages(self, parameters):
@@ -586,13 +618,14 @@ class Analysis(Tool):
         # python_exe = self.find_python()
         config_file = parameters[0].valueAsText
 
-        script_path = self.get_path("tie_analysis_dask.py")
+        # script_path = self.get_path("tie_analysis_dask.py")
+        script_path = os.path.join(self.conda_env_path, "Scripts", "tie_analysis.exe")
         if script_path is None:
             arcpy.AddError("Cannot find script path: anaylysis.py")
             raise arcpy.ExecuteError
 
         cmd_args = [
-            self.python_exe,
+            # self.python_exe,
             script_path,
             "--log-level",
             "DEBUG",
@@ -682,7 +715,9 @@ class Viewer(Tool):
         validation is performed.  This method is called whenever a parameter
         has been changed."""
         global tool_data
-        parameters[0].value = tool_data.get("project_config_path")
+        project_cfg_path = tool_data.get("project_config_path")
+        if project_cfg_path and os.path.isfile(project_cfg_path):
+            parameters[0].value = project_cfg_path
         return
 
     def updateMessages(self, parameters):
@@ -713,14 +748,14 @@ class Viewer(Tool):
         # TODO: py23
         plot_cmd = " ".join(map(lambda x: "-p {}".format(x), plots))
 
-        script_path = self.get_path("tie_viewer.py")
+        # TODO: sometime spelled 'tie_viewver.exe'
+        script_path = os.path.join(self.conda_env_path, "Scripts", "tie_viewer.exe")
         script_dir = os.path.dirname(script_path)
         if script_path is None:
-            arcpy.AddError("Cannot find script path: 'tie_viewer.py'")
+            arcpy.AddError("Cannot find script path: 'tie_viewer.exe'")
             raise arcpy.ExecuteError
 
         cmd_args = [
-            self.python_exe,
             script_path,
             # TODO_ rename to cache_dir?
             "--data-dir",
