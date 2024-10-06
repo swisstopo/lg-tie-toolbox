@@ -72,7 +72,7 @@ setup(
     entry_points={
         "console_scripts": [
             "tie_analysis = tietoolbox.scripts.tie_analysis_dask:main",
-            "tie_viewver = tietoolbox.scripts.tie_viewer:main",
+            "tie_viewer = tietoolbox.scripts.tie_viewer:main",
         ],
     },
 )
