@@ -15,8 +15,8 @@ setup(
     ),
     long_description=read("README.md"),
     long_description_content_type='text/markdown',
-    python_requires="~=3.9.18",
-    packages=["tietoolbox", "tietoolbox.scripts", "tietoolbox.esri.toolboxes",],
+    python_requires='>=3.9.18',
+    packages=["tietoolbox", "tietoolbox.scripts",],
     license_files = ('LICENSE.txt',),
     install_requires=[
         "shapely",
@@ -40,13 +40,7 @@ setup(
         "geocover_utils>=0.4.0",
     ],
     package_data={
-        "tietoolbox": [
-            "esri/toolboxes/*",
-            "esri/arcpy/*",
-            "esri/help/gp/*",
-            "esri/help/gp/toolboxes/*",
-            "esri/help/gp/messages/*",
-        ],
+
         "tietoolbox.scripts": [
             "scripts/symbols.tsv",
             "scripts/*",
@@ -61,18 +55,15 @@ setup(
         "Topic :: Scientific/Engineering :: Image Processing",
         "Topic :: Scientific/Engineering :: GIS",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     entry_points={
         "console_scripts": [
             "tie_analysis = tietoolbox.scripts.tie_analysis_dask:main",
-            "tie_viewver = tietoolbox.scripts.tie_viewer:main",
+            "tie_viewer = tietoolbox.scripts.tie_viewer:main",
         ],
     },
 )

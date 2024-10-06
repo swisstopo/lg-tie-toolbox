@@ -24,6 +24,8 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 from tietoolbox.scripts.utils import universalpath
 
 from untie import TIE_visual as TIEvis
@@ -58,7 +60,7 @@ legendfile = universalpath(os.path.join(cur_dir, "symbols.tsv"))
     "--config",
     help="Specify a configuration file",
     metavar="FILE",
-    default=os.path.basename(__file__) + ".json",
+    default="config.json",
     show_default=True,
 )
 @click.option(

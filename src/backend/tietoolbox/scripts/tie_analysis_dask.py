@@ -17,6 +17,8 @@ if ".exe" in sys.executable and any("ESRI" in pth for pth in sys.path):
         paths.append(os.path.join(env_base, dir))
 
     sys.path = paths
+    
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
