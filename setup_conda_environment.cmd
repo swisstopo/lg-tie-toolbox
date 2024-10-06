@@ -65,7 +65,8 @@ echo  %activate%  %dest_env%
 CALL %activate%  %dest_env%
 
 ECHO %time% === Mamba install '%envname%' TIE packages === ===
-call %mamba% install -v --override-channels -c conda-forge -y  pip setuptools  geopandas scikit-image scipy rasterio shapely mayavi geocube ^
+call %mamba% install -v --override-channels -c conda-forge -y  ^
+pip setuptools  geopandas scikit-image scipy rasterio shapely mayavi geocube ^
   1> c:\temp\%envname%_mamba.txt 2> c:\temp\%envname%_mamba_err.txt
 
 ECHO %time% === Installing General  packages into  %envname% ===
