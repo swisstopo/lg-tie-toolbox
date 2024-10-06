@@ -32,8 +32,8 @@ jobs:
       - name: Install packages in PowerShell Core
         shell: bash -l {0}
         run: |
-          conda install --channel conda-forge conda-build anaconda-client conda-verify 
-          conda install --channel conda-forge  geocube geopandas matplotlib mayavi numpy rasterio scipy "shapely>=2.0.0"  scikit-image dask
+          conda install   --verbose  --yes --channel conda-forge conda-build anaconda-client conda-verify 
+          conda install  --verbose  --yes --channel conda-forge  geocube geopandas matplotlib mayavi numpy rasterio scipy "shapely>=2.0.0"  scikit-image dask 
           conda build --help
           conda info
           conda list
