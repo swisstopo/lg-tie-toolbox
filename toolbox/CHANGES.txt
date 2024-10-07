@@ -33,3 +33,12 @@ Version 0.4.7
 - using scripts created by `entry_points (in `<conda env>\Scripts`)
 - fix small cleanup error
 
+Version 0.4.8
+2024-10-06
+- Removing tests (no license for arcpy)
+- Building on windows
+
+Version 0.4.9
+2024-10-07
+- Improved install and clone batch file
+- Doc
