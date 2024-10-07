@@ -1,12 +1,22 @@
 @echo off
 
+
+SET "condaEnvName=%1"
+
+IF not defined condaEnvName (
+  echo Using the default value for condaEnvName
+  set condaEnvName=TIE
+) ELSE (
+  echo condaEnvName=%condaEnvName%
+)
+
 REM Define the drive letter and the network path
 set driveLetter=T:
 set networkPath=\\v0t0020a.adr.admin.ch\prod\lgX\TOPGIS\TIEToolbox
 set dirPath=H:\config\geocover
 set condarcPath=H:\.condarc
 SET ARCGIS_HOME=D:\ArcGIS_Home
-set condaEnvName=TIE
+
 
 REM Check if the drive exists and remove it if it does
 if exist %driveLetter%\ (
@@ -61,8 +71,11 @@ echo projectdir=T:\conda\envs\%condaEnvName%\demo
 echo username=%userName%
 ) > %dirPath%\geocover.ini
 
-endlocal
 
 ECHO %time% === Copying toolbox to %ARCGIS_HOME%  ===
 if not exist %ARCGIS_HOME% mkdir %ARCGIS_HOME%
-xcopy T:\conda\envs\%condaEnvName%\Lib\site-packages\tietoolbox\esri\toolboxes "%ARCGIS_HOME%\tietoolbox\"  /S /F /R /Y /I
+
+REM Copy Python files while excluding .pyc files and __pycache__ directories
+xcopy T:\conda\envs\%condaEnvName%\Lib\site-packages\tietoolbox  "%ARCGIS_HOME%\tietoolbox\"  /S /E /Y /EXCLUDE:exclude.txt
+
+endlocal
