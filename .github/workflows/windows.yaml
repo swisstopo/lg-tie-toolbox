@@ -63,7 +63,7 @@ jobs:
           $PACKAGE_PATH = $env:PACKAGE_PATH
           7z a TIE.7z $env:CONDA_PREFIX # Compress the package
 
-      - name: Upload Compressed Package
+      - name: Upload Compressed environement
         uses: actions/upload-artifact@v4
         with:
           name: conda-envs-TIE-${{ env.version }}.7z

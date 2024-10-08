@@ -5,10 +5,13 @@ Also provides basic saving/loading functionality to and from json/yaml
 https://gist.github.com/Hanwant/9875d35ee22b50fe815778af75e20e5d
 """
 
+import os
 import json
 from pathlib import Path
 
 import yaml
+
+PATH_ATTRIBUTES = ["gdb", "project_dir", "source"]
 
 
 class Config(dict):
@@ -27,16 +30,28 @@ class Config(dict):
     3 3
     """
 
+    config_filepath = None
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for k, v in self.items():
             if isinstance(v, dict):
                 self[k] = Config(v)
 
-    def __getattr__(self, key):
-        if key not in self:
-            raise KeyError(f"key doesn't exist: {key}")
-        return self[key]
+    def __getattr__(self, attribute_name):
+        if attribute_name not in self:
+            raise KeyError("Key doesn't exist: {}".format(attribute_name))
+
+        value = self[attribute_name]
+
+        if isinstance(value, str) and attribute_name in PATH_ATTRIBUTES:
+            value_path = Path(value)  # Create a Path object from the string
+            if not value_path.is_absolute():  # Check if the path is absolute
+                value_path = (
+                    Path(self.config_filepath) / value_path
+                )  # Combine with config_filepath
+            value = value_path.resolve()  # Resolve to an absolute path
+        return value
 
     def __setattr__(self, key, val):
         self[key] = val
@@ -49,6 +64,7 @@ class Config(dict):
     @classmethod
     def from_path(cls, filepath):
         """Loads config from given filepath"""
+        cls.config_filepath = os.path.abspath(os.path.dirname(filepath))
         filepath = Path(filepath)
         if filepath.suffix == ".json":
             return cls(load_config_json(filepath))
@@ -107,11 +123,34 @@ def save_config_yaml(config, path, write_mode="w"):
 
 
 def main():
-    cfg = load_config_json("config.json")
+    from unittest import mock
+    import json
 
-    print(cfg.Widdergalm.bbox)
+    json_content = """{
+     "name":"Stierenberg",
+     "Lines":{
+      "source":"Stierenberg\\\\geocover.gdb",
+      "layer":"Linear_Objects"
+     },
+     "Bedrock":{
+      "source":"D:\\\\Projects\\\\Stierenberg\\\\geocover.gdb",
+      "layer":"Bedrock_HARMOS_lt40000_Extract"
+     }
+   }"""
 
-    save_config_yaml(cfg, "config.yaml")
+    # Use unittest.mock to replace the open function
+    with mock.patch("builtins.open", mock.mock_open(read_data=json_content)):
+        cfg = Config.from_path("fake_path.json")
+        print(f"Config file path {cfg.config_filepath}")
+        print(
+            f"Source: relative path in cfg: {cfg.Lines.source}. Exists: {os.path.exists(cfg.Lines.source)}"
+        )
+        print(
+            f"Source: already absolute path: {cfg.Bedrock.source}. . Exists: {os.path.exists(cfg.Bedrock.source)}"
+        )
+        print(f"Layer name: {cfg.Lines.layer}")
+        print(config_to_dict(cfg))
+        save_config_yaml(cfg, "config.yaml")
 
 
 if __name__ == "__main__":
