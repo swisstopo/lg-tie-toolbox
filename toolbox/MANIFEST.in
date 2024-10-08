@@ -4,3 +4,5 @@ include VERSION
 include tietoolbox/scripts/symbols.tsv
 include LICENSE.txt
 include images/*.png
+include data/*
+include data/cache/*
