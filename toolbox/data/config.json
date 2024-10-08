@@ -1,0 +1,25 @@
+{
+    "name": "Stierenberg", 
+    "Lines": {
+        "source": "D:\\Projects\\Stierenberg\\geocover.gdb.zip",
+        "layer": "Linear_Objects", 
+        "attribute": "KIND"
+    }, 
+    "bbox": [
+        2587200.0, 
+        1165920.0, 
+        2588800.0, 
+        1166900.0
+    ], 
+    "gdb": "D:\\Projects\\Stierenberg\\geocover.gdb.zip",
+    "Bedrock": {
+        "source": "D:\\Projects\\Stierenberg\\geocover.gdb.zip",
+        "layer": "Bedrock_HARMOS_lt40000_Extract", 
+        "attribute": "TOPGIS_GC_GC_BED_FORM_ATT_FMAT_LITSTRAT"
+    }, 
+    "project_dir": "D:\\Projects\\Stierenberg", 
+    "DEM": {
+        "source": "D:\\Projects\\Stierenberg\\swissalti3d-2.0-mosaic.tif", 
+        "resolution": "2.0"
+    }
+}
