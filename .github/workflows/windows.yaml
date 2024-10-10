@@ -41,6 +41,7 @@ jobs:
       - name: Conda in PowerShell
         shell: powershell
         run: |
+          conda install -n base -c conda-forge mamba
           conda info
           conda list
       - name: Install packages in PowerShell Core
@@ -85,8 +86,9 @@ jobs:
     
       - name: Test Conda Package Installation
         run: |
-          conda create -n test-env --use-local tietoolbox
+          mamba create -n test-env python=3.9.18 geocube geopandas matplotlib mayavi numpy rasterio scipy
           conda activate test-env
+          mamba install --use-local tietoolbox
           # Run additional commands to test the package
 
 
