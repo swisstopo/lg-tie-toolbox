@@ -87,7 +87,7 @@ jobs:
       - name: Test Conda Package Installation
         run: |
           mamba create -n test-env python=3.9.18 geocube geopandas matplotlib mayavi numpy rasterio scipy
-          conda activate test-env
+          mamba activate test-env
           mamba install --use-local tietoolbox
           # Run additional commands to test the package
 
