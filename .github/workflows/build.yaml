@@ -16,24 +16,32 @@ jobs:
             os: ["ubuntu-latest", "windows-latest"]
     steps:
       - uses: actions/checkout@v2
+      - name: Cache Conda Environment
+        uses: actions/cache@v3
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: 3.9.18 # Set the specific Python version
-          auto-update-conda: true
+          auto-update-conda: false
           activate-environment: TIE
           channels: swisstopo,conda-forge  # default is included
           channel-priority: flexible
       - shell: bash -l {0}
         run: |
+          conda install -n base -c conda-forge mamba
           conda info
           conda list
 
       - name: Install packages in PowerShell Core
         shell: bash -l {0}
         run: |
-          conda install   --verbose  --yes --channel conda-forge conda-build anaconda-client conda-verify 
-          conda install  --verbose  --yes --channel conda-forge  geocube geopandas matplotlib mayavi numpy rasterio scipy "shapely>=2.0.0"  scikit-image dask 
+          mamba create -n test-env python=3.9.18 geocube geopandas matplotlib mayavi numpy rasterio scipy  conda-build anaconda-client conda-verify 
+          conda env update --file environment.yaml --prune
           conda build --help
           conda info
           conda list
@@ -59,7 +67,7 @@ jobs:
       - name: Upload Conda Package to GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name:  tietoolbox-${{ env.version }}-py39_0.tar.bz2
+          name:  tietoolbox-${{ env.version }}-${{ matrix.os }}-py39_0.tar.bz2
           path:   ${{ env.PACKAGE_PATH }} 
           compression-level: 0 # no compression
           
