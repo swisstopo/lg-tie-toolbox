@@ -14,10 +14,15 @@ setup(
         "Basic ESRI ArcMap/ArcGis Pro TIE Toolbox to perform Trace Information Extraction (TIE) Analysis."
     ),
     long_description=read("README.md"),
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     python_requires="~=3.9.18",
-    packages=["tietoolbox", "tietoolbox.scripts", "tietoolbox.esri.toolboxes",],
-    license_files = ('LICENSE.txt',),
+    packages=[
+        "tietoolbox",
+        "tietoolbox.scripts",
+        "tietoolbox.esri.toolboxes",
+        "tietoolbox.data",
+    ],
+    license_files=("LICENSE.txt",),
     install_requires=[
         "shapely",
         "geocube",
@@ -40,16 +45,19 @@ setup(
         "geocover_utils>=0.4.0",
     ],
     package_data={
-
         "tietoolbox.scripts": [
             "scripts/symbols.tsv",
             "scripts/*",
         ],
-         'tietoolbox': ['data/*', 'data/cache/*',  "esri/toolboxes/*",
+        "tietoolbox": [
+            "data/*",
+            "data/cache/*",
+            "esri/toolboxes/*",
             "esri/arcpy/*",
             "esri/help/gp/*",
             "esri/help/gp/toolboxes/*",
-            "esri/help/gp/messages/*",],
+            "esri/help/gp/messages/*",
+        ],
     },
     include_package_data=True,
     classifiers=[
