@@ -76,6 +76,7 @@ ECHO %time% === Copying toolbox to %ARCGIS_HOME%  ===
 if not exist %ARCGIS_HOME% mkdir %ARCGIS_HOME%
 
 REM Copy Python files while excluding .pyc files and __pycache__ directories
-xcopy T:\conda\envs\%condaEnvName%\Lib\site-packages\tietoolbox  "%ARCGIS_HOME%\tietoolbox\"  /S /E /Y /EXCLUDE:exclude.txt
+echo robocopy T:\conda\envs\%condaEnvName%\Lib\site-packages\tietoolbox  %ARCGIS_HOME%\tietoolbox\/MIR /XF *.pyc /XD __pycache__
+robocopy T:\conda\envs\%condaEnvName%\Lib\site-packages\tietoolbox  %ARCGIS_HOME%\tietoolbox\ /MIR  /MIR /XF *.pyc /XD __pycache__
 
 endlocal
