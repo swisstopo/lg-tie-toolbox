@@ -18,19 +18,30 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      - name: Cache Conda Environment
+        uses: actions/cache@v3
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
+
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: 3.9.18 # Set the specific Python version
-          auto-update-conda: true
+          auto-update-conda: false  # no update
           activate-environment: TIE
-          channels: swisstopo,conda-forge,esri  # default is included
+          channels: swisstopo,conda-forge  # default is included
           channel-priority: flexible
-          
+
+      - name: Install Dependencies
+        run: conda env update --file environment.yaml --prune
           
       - name: Conda in PowerShell
         shell: powershell
         run: |
+          conda install -n base -c conda-forge mamba
           conda info
           conda list
       - name: Install packages in PowerShell Core
@@ -54,7 +65,7 @@ jobs:
       - name: Build Conda Package
         shell: pwsh
         run: |
-          conda build -c swisstopo -c conda-forge -c esri recipe
+          conda build -c swisstopo -c conda-forge  recipe
           $PACKAGE_PATH = conda build  --output recipe
           echo "PACKAGE_PATH=$PACKAGE_PATH" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "=== PACKAGE_PATH=$PACKAGE_PATH ==="
@@ -75,8 +86,9 @@ jobs:
     
       - name: Test Conda Package Installation
         run: |
-          conda create -n test-env --use-local tietoolbox
-          conda activate test-env
+          mamba create -n test-env python=3.9.18 geocube geopandas matplotlib mayavi numpy rasterio scipy
+          mamba activate test-env
+          mamba install --use-local tietoolbox
           # Run additional commands to test the package
 
 
