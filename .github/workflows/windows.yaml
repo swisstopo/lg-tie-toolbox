@@ -18,6 +18,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      - name: Cache Conda Environment
+        uses: actions/cache@v3
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
+
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
