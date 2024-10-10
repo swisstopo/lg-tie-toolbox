@@ -40,18 +40,16 @@ setup(
         "geocover_utils>=0.4.0",
     ],
     package_data={
-        "tietoolbox": [
-            "esri/toolboxes/*",
-            "esri/arcpy/*",
-            "esri/help/gp/*",
-            "esri/help/gp/toolboxes/*",
-            "esri/help/gp/messages/*",
-        ],
+
         "tietoolbox.scripts": [
             "scripts/symbols.tsv",
             "scripts/*",
         ],
-         'tietoolbox': ['data/*', 'data/cache/*'],
+         'tietoolbox': ['data/*', 'data/cache/*',  "esri/toolboxes/*",
+            "esri/arcpy/*",
+            "esri/help/gp/*",
+            "esri/help/gp/toolboxes/*",
+            "esri/help/gp/messages/*",],
     },
     include_package_data=True,
     classifiers=[
