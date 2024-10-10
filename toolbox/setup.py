@@ -14,10 +14,14 @@ setup(
         "Basic ESRI ArcMap/ArcGis Pro TIE Toolbox to perform Trace Information Extraction (TIE) Analysis."
     ),
     long_description=read("README.md"),
-    long_description_content_type='text/markdown',
-    python_requires="~=3.9.18",
-    packages=["tietoolbox", "tietoolbox.scripts", "tietoolbox.esri.toolboxes",],
-    license_files = ('LICENSE.txt',),
+    long_description_content_type="text/markdown",
+    python_requires=">=3.9",
+    packages=[
+        "tietoolbox",
+        "tietoolbox.scripts",
+        "tietoolbox.esri.toolboxes",
+    ],
+    license_files=("LICENSE.txt",),
     install_requires=[
         "shapely",
         "geocube",
@@ -40,16 +44,19 @@ setup(
         "geocover_utils>=0.4.0",
     ],
     package_data={
-
         "tietoolbox.scripts": [
             "scripts/symbols.tsv",
             "scripts/*",
         ],
-         'tietoolbox': ['data/*', 'data/cache/*',  "esri/toolboxes/*",
+        "tietoolbox": [
+            "data/*",
+            "data/cache/*",
+            "esri/toolboxes/*",
             "esri/arcpy/*",
             "esri/help/gp/*",
             "esri/help/gp/toolboxes/*",
-            "esri/help/gp/messages/*",],
+            "esri/help/gp/messages/*",
+        ],
     },
     include_package_data=True,
     classifiers=[
@@ -61,12 +68,10 @@ setup(
         "Topic :: Scientific/Engineering :: GIS",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
+         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     entry_points={
         "console_scripts": [
