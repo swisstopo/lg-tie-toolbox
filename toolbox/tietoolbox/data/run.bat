@@ -1,0 +1,1 @@
+D:\conda\envs\TIE\python.exe D:\conda\envs\TIE\Lib\site-packages\tietoolbox\scripts\tie_viewer.py --data-dir H:\code\lg-tie-toolbox\toolbox\data\cache  --log-level DEBUG --config H:\code\lg-tie-toolbox\toolbox\data\config.json -p 3DTIE

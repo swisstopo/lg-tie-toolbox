@@ -4,3 +4,8 @@ include VERSION
 include tietoolbox/scripts/symbols.tsv
 include LICENSE.txt
 include images/*.png
+include data/swissalti3d-2.0-mosaic.tif
+include data/geocover.gdb.zip
+include data/config.json
+include data/cache/*
+include data/*

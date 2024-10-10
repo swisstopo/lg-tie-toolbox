@@ -51,6 +51,7 @@ setup(
             "scripts/symbols.tsv",
             "scripts/*",
         ],
+         'tietoolbox': ['data/*', 'data/cache/*'],
     },
     include_package_data=True,
     classifiers=[
@@ -73,6 +74,7 @@ setup(
         "console_scripts": [
             "tie_analysis = tietoolbox.scripts.tie_analysis_dask:main",
             "tie_viewer = tietoolbox.scripts.tie_viewer:main",
+            "tie_demo = tietoolbox.scripts.tie_demo:main",
         ],
     },
 )
