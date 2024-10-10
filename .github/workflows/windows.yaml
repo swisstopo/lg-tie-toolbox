@@ -30,11 +30,13 @@ jobs:
         uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: 3.9.18 # Set the specific Python version
-          auto-update-conda: true
+          auto-update-conda: false  # no update
           activate-environment: TIE
           channels: swisstopo,conda-forge  # default is included
           channel-priority: flexible
-          
+
+      - name: Install Dependencies
+        run: conda env update --file environment.yaml --prune
           
       - name: Conda in PowerShell
         shell: powershell
