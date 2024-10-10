@@ -1,0 +1,75 @@
+name: Build Conda Environnement
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - develop2
+
+jobs:
+  build:
+    runs-on: windows-latest  # Only run on Windows
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.9.18 # Set the specific Python version
+          auto-update-conda: true
+          activate-environment: TIE
+          channels: swisstopo,conda-forge,esri  # default is included
+          channel-priority: flexible
+          
+      - name: Install 7-Zip
+        run: choco install 7zip
+        shell: powershell
+        
+      - name: Verify 7z availability
+        run: 7z 
+        shell: powershell
+          
+      - name: Conda in PowerShell
+        shell: powershell
+        run: |
+          conda info
+          conda list
+      - name: Install packages in PowerShell Core
+        shell: pwsh
+        run: |
+          conda install --channel conda-forge conda-build anaconda-client conda-verify 
+          conda install --channel conda-forge  geocube geopandas matplotlib mayavi numpy rasterio scipy "shapely>=2.0.0"  scikit-image dask
+          conda build --help
+          conda info
+          conda list
+          echo $env:CONDA_PREFIX
+          
+      - name: Set Package Version
+        shell: pwsh
+        run: |
+          $version = Get-Content toolbox/VERSION
+          echo "version=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "=== PKG_VERSION=$version ==="
+          
+      - name: Compress package with 7z
+        shell: pwsh
+        run: |
+          $PACKAGE_PATH = $env:PACKAGE_PATH
+          7z a TIE.7z $env:CONDA_PREFIX # Compress the package
+
+      - name: Upload Compressed Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: conda-envs-TIE-${{ env.version }}.7z
+          path: TIE.7z  # Upload the 7z compressed file
+          compression-level: 0 # no compression
+          
+
+
+
