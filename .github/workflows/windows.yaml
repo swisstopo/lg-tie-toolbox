@@ -27,13 +27,6 @@ jobs:
           channels: swisstopo,conda-forge,esri  # default is included
           channel-priority: flexible
           
-      - name: Install 7-Zip
-        run: choco install 7zip
-        shell: powershell
-        
-      - name: Verify 7z availability
-        run: 7z 
-        shell: powershell
           
       - name: Conda in PowerShell
         shell: powershell
@@ -57,18 +50,6 @@ jobs:
           echo "version=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "=== PKG_VERSION=$version ==="
           
-      - name: Compress package with 7z
-        shell: pwsh
-        run: |
-          $PACKAGE_PATH = $env:PACKAGE_PATH
-          7z a TIE.7z $env:CONDA_PREFIX # Compress the package
-
-      - name: Upload Compressed Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: conda-envs-TIE-${{ env.version }}.7z
-          path: TIE.7z  # Upload the 7z compressed file
-          compression-level: 0 # no compression
           
       - name: Build Conda Package
         shell: pwsh
