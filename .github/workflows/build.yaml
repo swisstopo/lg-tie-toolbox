@@ -31,17 +31,17 @@ jobs:
           activate-environment: TIE
           channels: swisstopo,conda-forge  # default is included
           channel-priority: flexible
+          environment-file: environment.yaml
       - shell: bash -l {0}
+        name: Install packages for building
         run: |
-          conda install -n base -c conda-forge mamba
+          conda install  -c conda-forge mamba conda-build anaconda-client conda-verify 
           conda info
           conda list
 
-      - name: Install packages in PowerShell Core
+      - name: Check installation
         shell: bash -l {0}
         run: |
-          mamba create -n test-env python=3.9.18 geocube geopandas matplotlib mayavi numpy rasterio scipy  conda-build anaconda-client conda-verify 
-          conda env update --file environment.yaml --prune
           conda build --help
           conda info
           conda list
