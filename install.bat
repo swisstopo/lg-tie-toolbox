@@ -52,6 +52,7 @@ echo ssl_verify: false >> %condarcPath%
 echo proxy_servers: >> %condarcPath%
 echo   http: prp04.admin.ch:8080 >> %condarcPath%
 
+
 REM Writing to the geocover.ini file
 ECHO %time% === Writing to the geocover.ini file  ===
 setlocal enabledelayedexpansion
@@ -64,11 +65,13 @@ echo proxy=prp04.admin.ch:8080
 echo tie_conda_env=T:\conda\envs\%condaEnvName%
 echo projectdir=T:\conda\envs\%condaEnvName%\demo
 echo username=%userName%
+echo arcgis_pro_python_dir=%PROGRAMFILES%\ArcGIS\Pro\bin\Python
 echo [default]
 echo proxy=prp04.admin.ch:8080
 echo tie_conda_env=T:\conda\envs\%condaEnvName%
 echo projectdir=T:\conda\envs\%condaEnvName%\demo
 echo username=%userName%
+echo arcgis_pro_python_dir=%PROGRAMFILES%\ArcGIS\Pro\bin\Python
 ) > %dirPath%\geocover.ini
 
 
