@@ -44,7 +44,7 @@ class Runner(object):
         self.default_callback = default_callback
 
     def running(
-        self, cmd, working_dir=None, timeout_sec=5, callback=None, minimized=False
+        self, cmd, working_dir=None, timeout_sec=5, callback=None, minimized=False, env=os.environ
     ):
         def t_read_stdout(process, queue):
             """Read from stdout"""
@@ -74,6 +74,7 @@ class Runner(object):
                     close_fds=False,
                     shell=True,
                     startupinfo=si,
+                    env=env,
                 )
             else:
                 process = Popen(
@@ -84,6 +85,7 @@ class Runner(object):
                     cwd=working_dir,
                     close_fds=False,
                     shell=True,
+                    env=env
                 )
 
             q = queue.Queue()
