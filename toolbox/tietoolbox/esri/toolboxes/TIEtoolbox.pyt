@@ -584,7 +584,7 @@ class Downloader(Tool):
             arcpy.AddError(cmd_args)
 
         arcpy.AddMessage("Please wait... Downloader is starting")
-        arcpy.AddMessage(cmd)
+        arcpy.AddMessage("Command: {}".format(cmd))
 
         runner = Runner()
 
@@ -595,6 +595,7 @@ class Downloader(Tool):
             cmd,
             self.conda_cmd["deactivate"],
         )
+        arcpy.AddMessage("Activating conda with {}".format(cmd))
 
         ret = runner.running(
             cmd,
