@@ -160,7 +160,7 @@ class FeaturesExporter:
 
     @property
     def workspace(self):
-        AddMsg("Creating worksapce")
+        AddMsg("Creating Workspace")
         self._create_extent()
 
     # TODO:  check if layer.minScale < MAX_SCALE
