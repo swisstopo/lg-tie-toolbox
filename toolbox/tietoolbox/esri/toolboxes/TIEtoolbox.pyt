@@ -108,6 +108,7 @@ class Tool(object):
         self.cancel_op = False
         self._cache_dir = None
         self._python_exe = None
+        self._conda_cmd = None
         self._conda_env_path = None
         self.conda_env_name = None
         self.output = Queue()
@@ -172,9 +173,51 @@ class Tool(object):
         return None
 
     @property
+    def conda_cmd(self):
+        if self._conda_cmd is not None:
+            return self._conda_cmd
+
+        # Retrieve the ArcGIS Pro Python directory from the config
+        arcgis_pro_python_dir = self.config.get(self.hostname, "arcgis_pro_python_dir")
+        if self.conda_env_path:
+            conda_activate = os.path.join(
+                self.conda_env_path, "condabin", "activate.bat"
+            )
+            conda_deactivate = os.path.join(
+                self.conda_env_path, "condabin", "deactivate.bat"
+            )
+
+            if not os.path.isfile(conda_activate):
+                raise arcpy.ExecuteError(
+                    "No conda activate command found at {}".format(conda_activate)
+                )
+
+            if not os.path.isfile(conda_deactivate):
+                raise arcpy.ExecuteError(
+                    "No conda activate command found at {}".format(conda_activate)
+                )
+
+            # Cache the paths for activate and deactivate commands
+            self._conda_cmd = {
+                "activate": conda_activate,
+                "deactivate": conda_deactivate,
+            }
+
+        return self._conda_cmd
+
+    def get_cmd(self, cmd):
+        return 'cmd "/c {} {} && {} && {} && exit 0"'.format(
+            self.conda_cmd["activate"],
+            self.conda_env_path,
+            cmd,
+            self.conda_cmd["deactivate"],
+        )
+
+    @property
     def python_exe(self, exe_name="python.exe"):
         if self._python_exe is not None:
             return self._python_exe
+
         if six.PY3:
             if sys.platform != "win32":
                 return sys.executable
@@ -502,6 +545,12 @@ class Downloader(Tool):
             arcpy.AddError("Cannot find script path: 'swissalti'")
             raise arcpy.ExecuteError
 
+        #
+        programfiles_dir = os.getenv("PROGRAMFILES")
+        CONDA_DIR = os.path.join(programfiles_dir, r"\ArcGIS\Pro\bin\Python\Scripts")
+        my_env = os.environ.copy()
+        my_env["PATH"] = CONDA_DIR + ":" + os.environ["PATH"]
+
         cmd_args = [
             self.python_exe,
             # TODO: absolute path
@@ -543,24 +592,24 @@ class Downloader(Tool):
             arcpy.AddError(cmd_args)
 
         arcpy.AddMessage("Please wait... Downloader is starting")
-        arcpy.AddMessage(cmd)
+        arcpy.AddMessage("Command: {}".format(cmd))
 
         runner = Runner()
 
         # TODO: how to remove ArcGis path pollution?
-        cmd = 'cmd "/c activate {} && {}  && deactivate && exit 0"'.format(
-            self.conda_env_path, cmd
-        )
+        full_cmd = self.get_cmd(cmd)
+        arcpy.AddMessage("Activating conda with {}".format(full_cmd))
 
         ret = runner.running(
-            cmd,
+            full_cmd,
             callback=arcpy.AddMessage,
             working_dir=self.conda_env_path,
             minimized=True,
+            env=my_env,
         )
 
         if ret == 0:
-            arcpy.AddMessage("Success")
+            arcpy.AddMessage("Success running command")
 
         return
 
@@ -640,12 +689,17 @@ class Analysis(Tool):
 
         runner = Runner()
 
-        cmd = 'cmd "/c activate {} && {}  && deactivate && exit 0"'.format(
-            self.conda_env_path, cmd
+        cmd = 'cmd "/c {} {} && {}  && {} && exit 0"'.format(
+            self.conda_cmd["activate"],
+            self.conda_env_path,
+            cmd,
+            self.conda_cmd["deactivate"],
         )
+        full_cmd = self.get_cmd(cmd)
+        arcpy.AddMessage("Activating conda with {}".format(full_cmd))
 
         ret = runner.running(
-            cmd,
+            full_cmd,
             callback=arcpy.AddMessage,
             working_dir=self.conda_env_path,
             minimized=True,
@@ -772,12 +826,12 @@ class Viewer(Tool):
         arcpy.AddMessage(cmd)
 
         runner = Runner()
-        cmd = 'cmd "/c activate {} && {}  && deactivate && exit 0"'.format(
-            self.conda_env_path, cmd
-        )
+
+        full_cmd = self.get_cmd(cmd)
+        arcpy.AddMessage("Activating conda with {}".format(full_cmd))
 
         return runner.running(
-            cmd,
+            full_cmd,
             callback=arcpy.AddMessage,
             working_dir=script_dir,
             minimized=True,
